@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회사 정보 검색 도구</title>
+    <style>
+        :root {
+            --color-primary: #208C8D;
+            --color-primary-hover: #1a6f70;
+            --color-bg: #fcfcf9;
+            --color-surface: #ffffff;
+            --color-text: #134252;
+            --color-text-secondary: #626c7c;
+            --color-border: #e0d7cf;
+            --color-error: #c01530;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--color-bg);
+            color: var(--color-text);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .header p {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .main-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--color-text);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text);
+            background: var(--color-surface);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(32, 140, 141, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--color-text-secondary);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: rgba(192, 21, 47, 0.1);
+            color: var(--color-error);
+        }
+
+        .btn-danger:hover {
+            background: rgba(192, 21, 47, 0.2);
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--color-border);
+            margin: 24px 0;
+        }
+
+        .settings-section h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            color: var(--color-text);
+        }
+
+        .items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: #f9f9f7;
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+        }
+
+        .items-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .items-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .items-list::-webkit-scrollbar-thumb {
+            background: var(--color-border);
+            border-radius: 3px;
+        }
+
+        .items-list::-webkit-scrollbar-thumb:hover {
+            background: var(--color-text-secondary);
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-surface);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
+            gap: 8px;
+        }
+
+        .item-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--color-text);
+            word-break: break-word;
+        }
+
+        .item-remove-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            background: rgba(192, 21, 47, 0.1);
+            color: var(--color-error);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .item-remove-btn:hover {
+            background: rgba(192, 21, 47, 0.2);
+        }
+
+        .add-item-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .add-item-input {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid var(--color-border);
+            border-radius: 6px;
+            color: var(--color-text);
+            background: var(--color-surface);
+            transition: border-color 0.2s;
+        }
+
+        .add-item-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .add-item-btn {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .add-item-btn:hover {
+            background: var(--color-primary-hover);
+        }
+
+        .empty-state {
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            padding: 24px 12px;
+        }
+
+        .status-message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .status-success {
+            background: rgba(33, 128, 141, 0.1);
+            color: #208C8D;
+            border: 1px solid rgba(33, 128, 141, 0.2);
+        }
+
+        .status-error {
+            background: rgba(192, 21, 47, 0.1);
+            color: var(--color-error);
+            border: 1px solid rgba(192, 21, 47, 0.2);
+        }
+
+        .tabs-info {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 회사 정보 검색</h1>
+            <p>회사명 + 검색 항목으로 자동 구글 검색</p>
+        </div>
+
+        <div class="main-section">
+            <div id="statusMessage"></div>
+
+            <div class="form-group">
+                <label class="form-label">회사명 입력</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="검색할 회사명을 입력하세요"
+                    />
+                    <button id="searchBtn" class="btn btn-primary">검색</button>
+                </div>
+                <div class="tabs-info" style="margin-top: 8px;">↵ Enter 키로도 검색 가능</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="settings-section">
+                <h2>검색 항목 설정</h2>
+                
+                <div class="add-item-wrapper">
+                    <input 
+                        type="text" 
+                        id="itemInput" 
+                        class="add-item-input" 
+                        placeholder="추가할 검색 항목 입력"
+                    />
+                    <button id="addItemBtn" class="btn add-item-btn">추가</button>
+                </div>
+
+                <div id="itemsList" class="items-list">
+                    <div class="empty-state">설정된 항목이 없습니다</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 상태 관리
+        const state = {
+            items: JSON.parse(localStorage.getItem('searchItems') || '[]'),
+            statusMessage: null,
+            statusTimeout: null
+        };
+
+        // DOM 요소
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const itemInput = document.getElementById('itemInput');
+        const addItemBtn = document.getElementById('addItemBtn');
+        const itemsList = document.getElementById('itemsList');
+        const statusMessage = document.getElementById('statusMessage');
+
+        // 초기화
+        function init() {
+            renderItems();
+            
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSearch();
+                }
+            });
+            
+            itemInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleAddItem();
+                }
+            });
+            
+            searchBtn.addEventListener('click', handleSearch);
+            addItemBtn.addEventListener('click', handleAddItem);
+        }
+
+        // 검색 처리 (비동기 순차 처리)
+        async function handleSearch() {
+            const query = searchInput.value.trim();
+            
+            if (!query) {
+                showStatus('회사명을 입력해주세요', 'error');
+                return;
+            }
+
+            if (state.items.length === 0) {
+                showStatus('검색 항목을 최소 1개 이상 설정해주세요', 'error');
+                return;
+            }
+
+            // 각 항목별로 구글 검색 탭 열기 (순차적으로)
+            for (let i = 0; i < state.items.length; i++) {
+                const item = state.items[i];
+                const searchQuery = `${query} ${item}`;
+                const googleSearchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`;
+                
+                // 탭 열기 (팝업 참조 유지)
+                const tab = window.open(googleSearchUrl, '_blank');
+                
+                // 다음 탭까지 10ms 대기
+                if (i < state.items.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                }
+            }
+
+            // 입력칸 비우기
+            searchInput.value = '';
+            searchInput.focus();
+
+            showStatus(`${state.items.length}개 탭이 열렸습니다`, 'success');
+        }
+
+        // 항목 추가 처리
+        function handleAddItem() {
+            const itemText = itemInput.value.trim();
+            
+            if (!itemText) {
+                showStatus('항목을 입력해주세요', 'error');
+                return;
+            }
+
+            if (state.items.includes(itemText)) {
+                showStatus('이미 추가된 항목입니다', 'error');
+                return;
+            }
+
+            state.items.push(itemText);
+            saveItems();
+            renderItems();
+            itemInput.value = '';
+            itemInput.focus();
+            
+            showStatus('항목이 추가되었습니다', 'success');
+        }
+
+        // 항목 제거
+        function removeItem(index) {
+            state.items.splice(index, 1);
+            saveItems();
+            renderItems();
+            showStatus('항목이 제거되었습니다', 'success');
+        }
+
+        // 항목 렌더링
+        function renderItems() {
+            if (state.items.length === 0) {
+                itemsList.innerHTML = '<div class="empty-state">설정된 항목이 없습니다</div>';
+                return;
+            }
+
+            itemsList.innerHTML = state.items
+                .map((item, index) => `
+                    <div class="item-row">
+                        <span class="item-text">${escapeHtml(item)}</span>
+                        <button class="item-remove-btn" onclick="removeItem(${index})">
+                            삭제
+                        </button>
+                    </div>
+                `)
+                .join('');
+        }
+
+        // 상태 메시지 표시
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message status-${type}`;
+            
+            if (state.statusTimeout) {
+                clearTimeout(state.statusTimeout);
+            }
+            
+            state.statusTimeout = setTimeout(() => {
+                statusMessage.textContent = '';
+                statusMessage.className = '';
+            }, 3000);
+        }
+
+        // 저장
+        function saveItems() {
+            localStorage.setItem('searchItems', JSON.stringify(state.items));
+        }
+
+        // HTML 이스케이프 (XSS 방지)
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // 시작
+        init();
+    </script>
+</body>
+</html>
