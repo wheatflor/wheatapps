@@ -1,0 +1,81 @@
+{
+  "lastUpdated": "2025-11-28T17:06:45.836366",
+  "version": "1.0.0",
+  "categories": [
+    "Tools"
+  ],
+  "apps": [
+    {
+      "id": "company-search",
+      "name": "🔍 회사 정보 검색",
+      "description": "회사명과 검색 항목으로 구글에서 자동 검색",
+      "category": "Tools",
+      "icon": "🔍",
+      "url": "JobHuntingInfo/",
+      "tags": [
+        "검색",
+        "회사정보",
+        "구글"
+      ],
+      "features": [
+        "다중 탭 검색",
+        "검색항목 커스터마이징",
+        "localStorage 저장"
+      ]
+    },
+    {
+      "id": "text-merger",
+      "name": "📄 텍스트 파일 병합",
+      "description": "여러 텍스트 파일을 하나로 병합하여 다운로드",
+      "category": "Tools",
+      "icon": "📄",
+      "url": "MergeText/",
+      "tags": [
+        "파일",
+        "병합",
+        "텍스트"
+      ],
+      "features": [
+        "드래그앤드롭",
+        "여러 파일 선택",
+        "다운로드"
+      ]
+    },
+    {
+      "id": "saramin-url-manager",
+      "name": "🔗 Saramin URL Manager",
+      "description": "사람인 채용공고 URL 중복 제거 및 정규화",
+      "category": "Tools",
+      "icon": "🔗",
+      "url": "SaraminDupeCleaner/",
+      "tags": [
+        "사람인",
+        "URL",
+        "중복제거"
+      ],
+      "features": [
+        "URL 정규화",
+        "중복 판별",
+        "자동 제거"
+      ]
+    },
+    {
+      "id": "whitespace-normalizer",
+      "name": "✨ Whitespace Normalizer",
+      "description": "유니코드 공백/줄바꿈 문자 정규화",
+      "category": "Tools",
+      "icon": "✨",
+      "url": "SpaceLineBreakNormalizer/",
+      "tags": [
+        "유니코드",
+        "공백",
+        "정규화"
+      ],
+      "features": [
+        "16종류 유니코드 처리",
+        "줄바꿈 표준화",
+        "상세 로그"
+      ]
+    }
+  ]
+}
