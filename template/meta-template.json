@@ -1,0 +1,21 @@
+{
+  "name": "[앱 이름]",
+  "id": "[앱-id]",
+  "description": "[앱에 대한 설명 (한두 줄)]",
+  "category": "[카테고리명]",
+  "icon": "🔧",
+  "tags": ["tag1", "tag2", "tag3"],
+  "version": "1.0.0",
+  "created": "2024-11-29",
+  "updated": "2024-11-29",
+  "author": "[작성자]",
+  "keywords": ["검색", "키워드"],
+  "features": [
+    "기능 1",
+    "기능 2"
+  ],
+  "links": {
+    "source": "https://github.com/...",
+    "documentation": ""
+  }
+}

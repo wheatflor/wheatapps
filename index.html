@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Apps Dashboard</title>
+    <link rel="stylesheet" href="styles/common.css">
+    <link rel="stylesheet" href="styles/navigation.css">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #f5f5f5;
+            --text-dark: #1f2937;
+            --border-color: #e5e7eb;
+            --hover-bg: #f3f4f6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+            color: white;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .filter-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-tag {
+            padding: 0.5rem 1rem;
+            background: var(--secondary-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        
+        .filter-tag:hover,
+        .filter-tag.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-section {
+            margin-bottom: 3rem;
+        }
+        
+        .category-title {
+            font-size: 1.8rem;
+            margin: 2rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .category-count {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        
+        .app-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .app-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .app-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+        
+        .app-description {
+            font-size: 0.95rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .app-link {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.3s;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .app-link:hover {
+            background: #1e40af;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            border-radius: 12px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        
+        .error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .category-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📱 Web Apps Dashboard</h1>
+            <p>모든 웹앱에 한곳에서 접근할 수 있습니다</p>
+        </header>
+        
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalApps">0</div>
+                <div class="stat-label">Total Apps</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalCategories">0</div>
+                <div class="stat-label">Categories</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="lastUpdated">-</div>
+                <div class="stat-label">Last Updated</div>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput" 
+                placeholder="웹앱 검색... (이름이나 설명으로 검색)"
+            >
+            <div class="filter-tags" id="filterTags"></div>
+        </div>
+        
+        <div id="content">
+            <div class="loading">로딩 중...</div>
+        </div>
+    </div>
+
+    <script>
+        // 주요 설정
+        const CONFIG = {
+            GITHUB_REPO: 'https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO_NAME/main',
+            APPS_PATH: '/apps'
+        };
+
+        // 전역 데이터 저장소
+        const appDatabase = {
+            apps: [],
+            categories: [],
+            index: {}
+        };
+
+        // 초기화
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initializeAppDatabase();
+                renderDashboard();
+                setupEventListeners();
+            } catch (error) {
+                console.error('초기화 오류:', error);
+                showError('데이터를 로드하는 중 오류가 발생했습니다.');
+            }
+        });
+
+        /**
+         * 앱 데이터베이스 초기화
+         * - 폴더 구조 스캔
+         * - 메타데이터 로드
+         * - 검색 인덱스 생성
+         */
+        async function initializeAppDatabase() {
+            try {
+                // 1. 수동으로 정의된 데이터 로드 (또는 API 호출)
+                const response = await fetch('./data.json');
+                const data = await response.json();
+                
+                appDatabase.categories = data.categories || [];
+                appDatabase.apps = data.apps || [];
+                appDatabase.index = buildSearchIndex(appDatabase.apps);
+                
+                console.log(`로드됨: ${appDatabase.apps.length}개 앱, ${appDatabase.categories.length}개 카테고리`);
+            } catch (error) {
+                console.warn('data.json 로드 실패, 대체 방법 사용:', error);
+                // 폴백: 기본 구조 사용
+                appDatabase.apps = [];
+                appDatabase.categories = [];
+            }
+        }
+
+        /**
+         * 검색 인덱스 빌드
+         */
+        function buildSearchIndex(apps) {
+            const index = {};
+            apps.forEach(app => {
+                const keywords = [
+                    app.name,
+                    app.description,
+                    app.category,
+                    ...(app.tags || [])
+                ].map(k => k.toLowerCase());
+                
+                keywords.forEach(keyword => {
+                    if (!index[keyword]) index[keyword] = [];
+                    index[keyword].push(app.id);
+                });
+            });
+            return index;
+        }
+
+        /**
+         * 대시보드 렌더링
+         */
+        function renderDashboard() {
+            const content = document.getElementById('content');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            // 필터링된 앱 목록
+            let filteredApps = appDatabase.apps;
+            if (searchTerm) {
+                filteredApps = filteredApps.filter(app => 
+                    app.name.toLowerCase().includes(searchTerm) ||
+                    (app.description && app.description.toLowerCase().includes(searchTerm))
+                );
+            }
+            
+            // 카테고리별로 그룹화
+            const grouped = groupByCategory(filteredApps);
+            
+            // 통계 업데이트
+            updateStats(filteredApps);
+            
+            // 빈 결과
+            if (Object.keys(grouped).length === 0) {
+                content.innerHTML = '<div class="error">검색 결과가 없습니다.</div>';
+                return;
+            }
+            
+            // 카테고리별 렌더링
+            let html = '';
+            Object.entries(grouped).forEach(([category, apps]) => {
+                html += `
+                    <div class="category-section">
+                        <h2 class="category-title">
+                            ${getCategoryIcon(category)} ${category}
+                            <span class="category-count">${apps.length}</span>
+                        </h2>
+                        <div class="apps-grid">
+                            ${apps.map(app => createAppCard(app)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        /**
+         * 앱 카드 생성
+         */
+        function createAppCard(app) {
+            const appUrl = `./apps/${app.category}/${app.id}/`;
+            return `
+                <a href="${appUrl}" class="app-card" title="${app.description || app.name}">
+                    <div class="app-icon">${app.icon || '📱'}</div>
+                    <div class="app-name">${app.name}</div>
+                    <div class="app-description">${app.description || 'No description'}</div>
+                    <div style="color: #9ca3af; font-size: 0.85rem;">→ 열기</div>
+                </a>
+            `;
+        }
+
+        /**
+         * 카테고리별 그룹화
+         */
+        function groupByCategory(apps) {
+            return apps.reduce((acc, app) => {
+                if (!acc[app.category]) acc[app.category] = [];
+                acc[app.category].push(app);
+                return acc;
+            }, {});
+        }
+
+        /**
+         * 카테고리 아이콘 가져오기
+         */
+        function getCategoryIcon(category) {
+            const icons = {
+                'Tools': '🔧',
+                'Games': '🎮',
+                'Utilities': '⚙️',
+                'Calculators': '🧮',
+                'Generators': '✨',
+                'Data': '📊',
+                'Converters': '🔄'
+            };
+            return icons[category] || '📁';
+        }
+
+        /**
+         * 통계 업데이트
+         */
+        function updateStats(apps) {
+            document.getElementById('totalApps').textContent = appDatabase.apps.length;
+            document.getElementById('totalCategories').textContent = appDatabase.categories.length;
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('ko-KR');
+        }
+
+        /**
+         * 이벤트 리스너 설정
+         */
+        function setupEventListeners() {
+            // 검색
+            document.getElementById('searchInput').addEventListener('input', () => {
+                renderDashboard();
+            });
+            
+            // 필터 태그
+            updateFilterTags();
+        }
+
+        /**
+         * 필터 태그 업데이트
+         */
+        function updateFilterTags() {
+            const tagsContainer = document.getElementById('filterTags');
+            const categories = [...new Set(appDatabase.apps.map(a => a.category))];
+            
+            tagsContainer.innerHTML = categories
+                .map(cat => `<button class="filter-tag" onclick="filterByCategory('${cat}')">${cat}</button>`)
+                .join('');
+        }
+
+        /**
+         * 카테고리로 필터링
+         */
+        function filterByCategory(category) {
+            appDatabase.apps = appDatabase.apps.filter(a => a.category === category);
+            renderDashboard();
+        }
+
+        /**
+         * 오류 표시
+         */
+        function showError(message) {
+            document.getElementById('content').innerHTML = `<div class="error">${message}</div>`;
+        }
+    </script>
+</body>
+</html>
