@@ -3,411 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>텍스트 파일 병합</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    <meta name="description" content="여러 개의 텍스트 파일을 한 개로 병합하여 다운로드">
+    <meta name="theme-color" content="#21808d">
+    <title>텍스트 파일 병합 - Web Apps</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--color-background, #fcfcf9);
-            color: var(--color-text, #13343b);
-            padding: 40px 20px;
-            min-height: 100vh;
-        }
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" href="../../styles/common.css">
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .drop-zone {
-            border: 2px dashed var(--color-border, rgba(94, 82, 64, 0.3));
-            border-radius: 12px;
-            padding: 60px 40px;
-            text-align: center;
-            background: var(--color-surface, #fffffe);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 24px;
-        }
-
-        .drop-zone:hover {
-            border-color: var(--color-primary, #21808d);
-            background: var(--color-secondary, rgba(94, 82, 64, 0.05));
-        }
-
-        .drop-zone.drag-over {
-            border-color: var(--color-primary, #21808d);
-            background: var(--color-secondary, rgba(33, 128, 141, 0.1));
-            transform: scale(1.02);
-        }
-
-        .drop-zone-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.6;
-        }
-
-        .drop-zone-text {
-            font-size: 16px;
-            color: var(--color-text-secondary, #62676c);
-            margin-bottom: 8px;
-        }
-
-        .drop-zone-hint {
-            font-size: 14px;
-            color: var(--color-text-secondary, #62676c);
-            opacity: 0.7;
-        }
-
-        .file-list {
-            background: var(--color-surface, #fffffe);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 24px;
-            border: 1px solid var(--color-border, rgba(94, 82, 64, 0.2));
-        }
-
-        .file-list-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: var(--color-text, #13343b);
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px 16px;
-            background: var(--color-background, #fcfcf9);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border: 1px solid var(--color-border, rgba(94, 82, 64, 0.12));
-        }
-
-        .file-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex: 1;
-        }
-
-        .file-icon {
-            font-size: 20px;
-        }
-
-        .file-name {
-            font-size: 14px;
-            color: var(--color-text, #13343b);
-            word-break: break-word;
-        }
-
-        .file-remove {
-            background: transparent;
-            border: none;
-            color: var(--color-error, #c0152f);
-            cursor: pointer;
-            font-size: 20px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .file-remove:hover {
-            background: rgba(192, 21, 47, 0.1);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--color-text-secondary, #62676c);
-            opacity: 0.6;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            border: none;
-        }
-
-        .btn-primary {
-            background: var(--color-primary, #21808d);
-            color: var(--color-btn-primary-text, #fcfcf9);
-        }
-
-        .btn-primary:hover {
-            background: var(--color-primary-hover, #1d7480);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background: var(--color-secondary, rgba(94, 82, 64, 0.12));
-            color: var(--color-text, #13343b);
-        }
-
-        .btn-secondary:hover {
-            background: var(--color-secondary-hover, rgba(94, 82, 64, 0.2));
-        }
-
-        #file-input {
-            display: none;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: #1f2121;
-                color: #f5f5f5;
-            }
-
-            .drop-zone {
-                background: #262828;
-                border-color: rgba(119, 124, 124, 0.3);
-            }
-
-            .drop-zone:hover {
-                border-color: #32b8c6;
-                background: rgba(119, 124, 124, 0.15);
-            }
-
-            .drop-zone.drag-over {
-                border-color: #32b8c6;
-                background: rgba(50, 184, 198, 0.15);
-            }
-
-            .file-list {
-                background: #262828;
-                border-color: rgba(119, 124, 124, 0.2);
-            }
-
-            .file-item {
-                background: #1f2121;
-                border-color: rgba(119, 124, 124, 0.15);
-            }
-
-            .btn-primary {
-                background: #32b8c6;
-                color: #13343b;
-            }
-
-            .btn-primary:hover {
-                background: #2da6b2;
-            }
-
-            .btn-secondary {
-                background: rgba(119, 124, 124, 0.15);
-                color: #f5f5f5;
-            }
-
-            .btn-secondary:hover {
-                background: rgba(119, 124, 124, 0.25);
-            }
-        }
-    </style>
+    <!-- 앱별 스타일 -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>텍스트 파일 병합</h1>
+    <!-- 네비게이션 헤더 -->
+    <div class="app-header">
+        <h1>📄 텍스트 파일 병합</h1>
+        <p>여러 개의 텍스트 파일을 한 개로 병합하여 다운로드</p>
+    </div>
 
-        <div class="drop-zone" id="drop-zone">
-            <div class="drop-zone-icon">📄</div>
-            <div class="drop-zone-text">파일을 드래그하여 놓거나 클릭하여 선택하세요</div>
-            <div class="drop-zone-hint">여러 개의 텍스트 파일을 선택할 수 있습니다</div>
-        </div>
+    <!-- 경로 표시 (Breadcrumb) -->
+    <nav class="breadcrumb">
+        <a href="../../">Dashboard</a>
+        <span>/</span>
+        <a href="../../#Tools">Tools</a>
+        <span>/</span>
+        <span>텍스트 파일 병합</span>
+    </nav>
 
-        <input type="file" id="file-input" multiple accept=".txt">
+    <!-- 앱 콘텐츠 -->
+    <div class="app-content">
+        <div class="app-container">
+            <!-- 드롭존 -->
+            <div class="drop-zone" id="drop-zone">
+                <div class="drop-zone-icon">📁</div>
+                <div class="drop-zone-text">파일을 드래그하여 놓거나 클릭하여 선택하세요</div>
+                <div class="drop-zone-hint">여러 개의 텍스트 파일(.txt)을 선택할 수 있습니다</div>
+            </div>
 
-        <div class="file-list" id="file-list-container" style="display: none;">
-            <div class="file-list-title">선택된 파일 (<span id="file-count">0</span>)</div>
-            <div id="file-list"></div>
-        </div>
+            <input type="file" id="file-input" multiple accept=".txt">
 
-        <div class="actions">
-            <button class="btn btn-primary" id="merge-btn" disabled>병합하여 다운로드</button>
-            <button class="btn btn-secondary" id="clear-btn">전체 삭제</button>
+            <!-- 파일 목록 -->
+            <div class="file-list" id="file-list-container" style="display: none;">
+                <div class="file-list-title">선택된 파일 (<span id="file-count">0</span>)</div>
+                <div id="file-list"></div>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="actions">
+                <button class="btn btn-primary" id="merge-btn" disabled>병합하여 다운로드</button>
+                <button class="btn btn-secondary" id="clear-btn">전체 삭제</button>
+            </div>
         </div>
     </div>
 
-    <script>
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const fileList = document.getElementById('file-list');
-        const fileListContainer = document.getElementById('file-list-container');
-        const fileCount = document.getElementById('file-count');
-        const mergeBtn = document.getElementById('merge-btn');
-        const clearBtn = document.getElementById('clear-btn');
+    <!-- 공통 유틸리티 스크립트 -->
+    <script src="../../scripts/common.js"></script>
 
-        let files = [];
-
-        // 드롭존 클릭 시 파일 선택 창 열기
-        dropZone.addEventListener('click', () => {
-            fileInput.click();
-        });
-
-        // 파일 입력 변경 이벤트
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
-        });
-
-        // 드래그 오버 이벤트
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('drag-over');
-        });
-
-        // 드래그 종료 이벤트
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('drag-over');
-        });
-
-        // 드롭 이벤트
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('drag-over');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        // 파일 처리
-        function handleFiles(newFiles) {
-            const txtFiles = Array.from(newFiles).filter(file => 
-                file.name.toLowerCase().endsWith('.txt')
-            );
-
-            if (txtFiles.length === 0) {
-                alert('텍스트 파일(.txt)만 선택할 수 있습니다.');
-                return;
-            }
-
-            files.push(...txtFiles);
-            updateFileList();
-        }
-
-        // 파일 목록 업데이트
-        function updateFileList() {
-            if (files.length === 0) {
-                fileListContainer.style.display = 'none';
-                mergeBtn.disabled = true;
-                return;
-            }
-
-            fileListContainer.style.display = 'block';
-            mergeBtn.disabled = false;
-            fileCount.textContent = files.length;
-
-            fileList.innerHTML = files.map((file, index) => `
-                <div class="file-item">
-                    <div class="file-info">
-                        <span class="file-icon">📄</span>
-                        <span class="file-name">${escapeHtml(file.name)}</span>
-                    </div>
-                    <button class="file-remove" onclick="removeFile(${index})" aria-label="파일 삭제">×</button>
-                </div>
-            `).join('');
-        }
-
-        // 파일 제거
-        function removeFile(index) {
-            files.splice(index, 1);
-            updateFileList();
-        }
-
-        // 전체 삭제
-        clearBtn.addEventListener('click', () => {
-            if (files.length > 0 && confirm('모든 파일을 삭제하시겠습니까?')) {
-                files = [];
-                fileInput.value = '';
-                updateFileList();
-            }
-        });
-
-        // 병합 및 다운로드
-        mergeBtn.addEventListener('click', async () => {
-            if (files.length === 0) return;
-
-            mergeBtn.disabled = true;
-            mergeBtn.textContent = '병합 중...';
-
-            try {
-                const contents = [];
-
-                for (let i = 0; i < files.length; i++) {
-                    const content = await readFileContent(files[i]);
-                    contents.push(content);
-                }
-
-                // 파일 내용을 줄바꿈 1개로 연결
-                const mergedContent = contents.join('\n');
-
-                // 다운로드
-                downloadFile(mergedContent, 'merged.txt');
-
-            } catch (error) {
-                alert('파일 병합 중 오류가 발생했습니다: ' + error.message);
-            } finally {
-                mergeBtn.disabled = false;
-                mergeBtn.textContent = '병합하여 다운로드';
-            }
-        });
-
-        // 파일 내용 읽기
-        function readFileContent(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => resolve(e.target.result);
-                reader.onerror = (e) => reject(new Error('파일을 읽을 수 없습니다'));
-                reader.readAsText(file, 'UTF-8');
-            });
-        }
-
-        // 파일 다운로드
-        function downloadFile(content, filename) {
-            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        // HTML 이스케이프
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    </script>
+    <!-- 앱별 스크립트 -->
+    <script src="script.js"></script>
 </body>
 </html>
-

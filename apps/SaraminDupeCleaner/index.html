@@ -3,465 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saramin URL Manager</title>
-    <style>
-        :root {
-            --color-white: rgba(255, 255, 255, 1);
-            --color-black: rgba(0, 0, 0, 1);
-            --color-cream-50: rgba(252, 252, 249, 1);
-            --color-cream-100: rgba(255, 255, 253, 1);
-            --color-gray-200: rgba(245, 245, 245, 1);
-            --color-gray-300: rgba(167, 169, 169, 1);
-            --color-gray-400: rgba(119, 124, 124, 1);
-            --color-slate-500: rgba(98, 108, 113, 1);
-            --color-brown-600: rgba(94, 82, 64, 1);
-            --color-charcoal-700: rgba(31, 33, 33, 1);
-            --color-charcoal-800: rgba(38, 40, 40, 1);
-            --color-slate-900: rgba(19, 52, 59, 1);
-            --color-teal-300: rgba(50, 184, 198, 1);
-            --color-teal-500: rgba(33, 128, 141, 1);
-            --color-teal-600: rgba(29, 116, 128, 1);
-            --color-teal-700: rgba(26, 104, 115, 1);
-            --color-red-400: rgba(255, 84, 89, 1);
-            --color-red-500: rgba(192, 21, 47, 1);
-            --color-brown-600-rgb: 94, 82, 64;
-            --color-teal-500-rgb: 33, 128, 141;
-            --color-slate-900-rgb: 19, 52, 59;
-            --color-red-500-rgb: 192, 21, 47;
-            --color-background: var(--color-cream-50);
-            --color-surface: var(--color-cream-100);
-            --color-text: var(--color-slate-900);
-            --color-text-secondary: var(--color-slate-500);
-            --color-primary: var(--color-teal-500);
-            --color-primary-hover: var(--color-teal-600);
-            --color-primary-active: var(--color-teal-700);
-            --color-secondary: rgba(var(--color-brown-600-rgb), 0.12);
-            --color-secondary-hover: rgba(var(--color-brown-600-rgb), 0.2);
-            --color-border: rgba(var(--color-brown-600-rgb), 0.2);
-            --color-btn-primary-text: var(--color-cream-50);
-            --color-error: var(--color-red-500);
-            --color-focus-ring: rgba(var(--color-teal-500-rgb), 0.4);
-            --font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-size-sm: 12px;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --font-size-xl: 18px;
-            --font-weight-medium: 500;
-            --font-weight-semibold: 550;
-            --space-8: 8px;
-            --space-12: 12px;
-            --space-16: 16px;
-            --space-20: 20px;
-            --radius-base: 8px;
-            --radius-lg: 12px;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-            --duration-normal: 250ms;
-            --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
-        }
+    <meta name="description" content="Saramin 채용 공고 URL 정규화, 중복 판별 및 제거 도구">
+    <meta name="theme-color" content="#218a8d">
+    <title>Saramin URL Manager - Web Apps</title>
 
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --color-gray-400-rgb: 119, 124, 124;
-                --color-teal-300-rgb: 50, 184, 198;
-                --color-gray-300-rgb: 167, 169, 169;
-                --color-gray-200-rgb: 245, 245, 245;
-                --color-background: var(--color-charcoal-700);
-                --color-surface: var(--color-charcoal-800);
-                --color-text: var(--color-gray-200);
-                --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
-                --color-primary: var(--color-teal-300);
-                --color-secondary: rgba(var(--color-gray-400-rgb), 0.15);
-                --color-secondary-hover: rgba(var(--color-gray-400-rgb), 0.25);
-                --color-border: rgba(var(--color-gray-400-rgb), 0.3);
-                --color-error: var(--color-red-400);
-                --color-focus-ring: rgba(var(--color-teal-300-rgb), 0.4);
-                --color-btn-primary-text: var(--color-slate-900);
-            }
-        }
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" href="../../styles/common.css">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: var(--font-family-base);
-            background: var(--color-background);
-            color: var(--color-text);
-            padding: var(--space-20);
-            line-height: 1.5;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            font-size: var(--font-size-xl);
-            font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--space-20);
-            color: var(--color-text);
-        }
-
-        .section {
-            background: var(--color-surface);
-            border-radius: var(--radius-lg);
-            padding: var(--space-16);
-            margin-bottom: var(--space-16);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-title {
-            font-size: var(--font-size-base);
-            font-weight: var(--font-weight-semibold);
-            margin-bottom: var(--space-12);
-            color: var(--color-text);
-        }
-
-        .input-area, .output-area {
-            width: 100%;
-            min-height: 200px;
-            padding: var(--space-12);
-            font-family: 'Courier New', monospace;
-            font-size: var(--font-size-sm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-base);
-            background: var(--color-background);
-            color: var(--color-text);
-            resize: vertical;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
-
-        .input-area:focus {
-            outline: 2px solid var(--color-primary);
-            border-color: var(--color-primary);
-        }
-
-        .output-area {
-            background: var(--color-surface);
-            white-space: pre;
-        }
-
-        .log-area {
-            width: 100%;
-            min-height: 100px;
-            padding: var(--space-12);
-            font-family: 'Courier New', monospace;
-            font-size: var(--font-size-sm);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-base);
-            background: var(--color-background);
-            color: var(--color-text-secondary);
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        .button-group {
-            display: flex;
-            gap: var(--space-8);
-            flex-wrap: wrap;
-            margin-top: var(--space-12);
-        }
-
-        .btn {
-            padding: var(--space-8) var(--space-16);
-            border: none;
-            border-radius: var(--radius-base);
-            font-size: var(--font-size-base);
-            font-weight: var(--font-weight-medium);
-            cursor: pointer;
-            transition: all var(--duration-normal) var(--ease-standard);
-        }
-
-        .btn-primary {
-            background: var(--color-primary);
-            color: var(--color-btn-primary-text);
-        }
-
-        .btn-primary:hover {
-            background: var(--color-primary-hover);
-        }
-
-        .btn-secondary {
-            background: var(--color-secondary);
-            color: var(--color-text);
-        }
-
-        .btn-secondary:hover {
-            background: var(--color-secondary-hover);
-        }
-
-        .btn:focus-visible {
-            outline: none;
-            box-shadow: 0 0 0 3px var(--color-focus-ring);
-        }
-
-        .duplicate-line {
-            color: var(--color-error);
-            font-weight: var(--font-weight-semibold);
-        }
-
-        .stats {
-            display: flex;
-            gap: var(--space-20);
-            margin-top: var(--space-12);
-            font-size: var(--font-size-sm);
-            color: var(--color-text-secondary);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: var(--space-8);
-        }
-
-        .stat-value {
-            font-weight: var(--font-weight-semibold);
-            color: var(--color-text);
-        }
-    </style>
+    <!-- 앱별 스타일 -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Saramin URL Manager</h1>
+    <!-- 네비게이션 헤더 -->
+    <div class="app-header">
+        <h1>🔗 Saramin URL Manager</h1>
+        <p>채용 공고 URL 정규화, 중복 판별 및 제거</p>
+    </div>
 
-        <div class="section">
-            <div class="section-title">입력 데이터</div>
-            <textarea class="input-area" id="inputArea" placeholder="Saramin URL을 한 줄에 하나씩 입력하세요..."></textarea>
-            
-            <div class="button-group">
-                <button class="btn btn-primary" onclick="runAll()">일괄 실행</button>
-                <button class="btn btn-secondary" onclick="normalizeUrls()">링크 정규화</button>
-                <button class="btn btn-secondary" onclick="detectDuplicates()">중복 판별</button>
-                <button class="btn btn-secondary" onclick="removeDuplicates()">중복 제거</button>
+    <!-- 경로 표시 (Breadcrumb) -->
+    <nav class="breadcrumb">
+        <a href="../../">Dashboard</a>
+        <span>/</span>
+        <a href="../../#Tools">Tools</a>
+        <span>/</span>
+        <span>Saramin URL Manager</span>
+    </nav>
+
+    <!-- 앱 콘텐츠 -->
+    <div class="app-content">
+        <div class="app-container">
+            <!-- 입력 섹션 -->
+            <div class="section">
+                <div class="section-title">📥 입력 데이터</div>
+                <textarea class="input-area" id="inputArea" placeholder="Saramin URL을 한 줄에 하나씩 입력하세요..."></textarea>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="runAll()">일괄 실행</button>
+                    <button class="btn btn-secondary" onclick="normalizeUrls()">링크 정규화</button>
+                    <button class="btn btn-secondary" onclick="detectDuplicates()">중복 판별</button>
+                    <button class="btn btn-secondary" onclick="removeDuplicates()">중복 제거</button>
+                </div>
             </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title">결과</div>
-            <div class="output-area" id="outputArea"></div>
-            <div class="button-group">
-                <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
+            <!-- 결과 섹션 -->
+            <div class="section">
+                <div class="section-title">📤 결과</div>
+                <div class="output-area" id="outputArea"></div>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="copyResult()">결과 복사</button>
+                </div>
             </div>
-        </div>
 
-        <div class="section">
-            <div class="section-title">로그</div>
-            <div class="log-area" id="logArea"></div>
+            <!-- 로그 섹션 -->
+            <div class="section">
+                <div class="section-title">📝 로그</div>
+                <div class="log-area" id="logArea"></div>
+            </div>
         </div>
     </div>
 
-    <script>
-        let currentData = [];
-        let duplicateIndices = new Set();
+    <!-- 공통 유틸리티 스크립트 -->
+    <script src="../../scripts/common.js"></script>
 
-        function log(message) {
-            const logArea = document.getElementById('logArea');
-            const timestamp = new Date().toLocaleTimeString('ko-KR');
-            logArea.textContent += `[${timestamp}] ${message}\n`;
-            logArea.scrollTop = logArea.scrollHeight;
-        }
-
-        function extractRecIdx(url) {
-            const match = url.match(/rec_idx=(\d+)/);
-            return match ? match[1] : null;
-        }
-
-        function normalizeUrl(url) {
-            const recIdx = extractRecIdx(url);
-            if (!recIdx) return url;
-            
-            const baseUrl = url.split('rec_idx=')[0];
-            return `${baseUrl}rec_idx=${recIdx}`;
-        }
-
-        function normalizeUrls() {
-            const input = document.getElementById('inputArea').value;
-            const lines = input.split('\n').filter(line => line.trim());
-            
-            if (lines.length === 0) {
-                log('입력 데이터가 없습니다.');
-                return;
-            }
-
-            currentData = lines.map(line => normalizeUrl(line.trim()));
-            updateOutput();
-            log(`링크 정규화 완료: ${currentData.length}개 링크 처리`);
-        }
-
-        function detectDuplicates() {
-            const input = document.getElementById('inputArea').value;
-            const lines = input.split('\n').filter(line => line.trim());
-            
-            if (lines.length === 0) {
-                log('입력 데이터가 없습니다.');
-                return;
-            }
-
-            currentData = lines.map(line => line.trim());
-            duplicateIndices.clear();
-            
-            const recIdxMap = new Map();
-            let duplicateCount = 0;
-
-            currentData.forEach((url, index) => {
-                const recIdx = extractRecIdx(url);
-                if (recIdx) {
-                    if (recIdxMap.has(recIdx)) {
-                        duplicateIndices.add(index);
-                        if (!duplicateIndices.has(recIdxMap.get(recIdx))) {
-                            duplicateIndices.add(recIdxMap.get(recIdx));
-                        }
-                        duplicateCount++;
-                    } else {
-                        recIdxMap.set(recIdx, index);
-                    }
-                }
-            });
-
-            updateOutputWithHighlight();
-            log(`중복 판별 완료: ${duplicateCount}개 중복 링크 발견`);
-        }
-
-        function removeDuplicates() {
-            const input = document.getElementById('inputArea').value;
-            const lines = input.split('\n').filter(line => line.trim());
-            
-            if (lines.length === 0) {
-                log('입력 데이터가 없습니다.');
-                return;
-            }
-
-            const recIdxMap = new Map();
-            const uniqueUrls = [];
-            let removedCount = 0;
-
-            lines.forEach(line => {
-                const url = line.trim();
-                const recIdx = extractRecIdx(url);
-                
-                if (recIdx) {
-                    if (!recIdxMap.has(recIdx)) {
-                        recIdxMap.set(recIdx, true);
-                        uniqueUrls.push(url);
-                    } else {
-                        removedCount++;
-                    }
-                } else {
-                    uniqueUrls.push(url);
-                }
-            });
-
-            currentData = uniqueUrls;
-            duplicateIndices.clear();
-            updateOutput();
-            log(`중복 제거 완료: ${removedCount}개 중복 링크 제거됨, ${currentData.length}개 링크 남음`);
-        }
-
-        function runAll() {
-            const input = document.getElementById('inputArea').value;
-            const lines = input.split('\n').filter(line => line.trim());
-            
-            if (lines.length === 0) {
-                log('입력 데이터가 없습니다.');
-                return;
-            }
-
-            log('=== 일괄 실행 시작 ===');
-            
-            // 1. 정규화
-            currentData = lines.map(line => normalizeUrl(line.trim()));
-            log(`1단계: 링크 정규화 완료 (${currentData.length}개)`);
-            
-            // 2. 중복 판별
-            duplicateIndices.clear();
-            const recIdxMap = new Map();
-            let duplicateCount = 0;
-
-            currentData.forEach((url, index) => {
-                const recIdx = extractRecIdx(url);
-                if (recIdx) {
-                    if (recIdxMap.has(recIdx)) {
-                        duplicateIndices.add(index);
-                        if (!duplicateIndices.has(recIdxMap.get(recIdx))) {
-                            duplicateIndices.add(recIdxMap.get(recIdx));
-                        }
-                        duplicateCount++;
-                    } else {
-                        recIdxMap.set(recIdx, index);
-                    }
-                }
-            });
-            log(`2단계: 중복 판별 완료 (${duplicateCount}개 중복 발견)`);
-            
-            // 3. 중복 제거
-            const uniqueRecIdxMap = new Map();
-            const uniqueUrls = [];
-            let removedCount = 0;
-
-            currentData.forEach(url => {
-                const recIdx = extractRecIdx(url);
-                
-                if (recIdx) {
-                    if (!uniqueRecIdxMap.has(recIdx)) {
-                        uniqueRecIdxMap.set(recIdx, true);
-                        uniqueUrls.push(url);
-                    } else {
-                        removedCount++;
-                    }
-                } else {
-                    uniqueUrls.push(url);
-                }
-            });
-
-            currentData = uniqueUrls;
-            duplicateIndices.clear();
-            updateOutput();
-            log(`3단계: 중복 제거 완료 (${removedCount}개 제거, ${currentData.length}개 최종)`);
-            log('=== 일괄 실행 완료 ===');
-        }
-
-        function updateOutput() {
-            const outputArea = document.getElementById('outputArea');
-            outputArea.textContent = currentData.join('\n');
-        }
-
-        function updateOutputWithHighlight() {
-            const outputArea = document.getElementById('outputArea');
-            outputArea.innerHTML = '';
-            
-            currentData.forEach((url, index) => {
-                const line = document.createElement('div');
-                line.textContent = url;
-                if (duplicateIndices.has(index)) {
-                    line.className = 'duplicate-line';
-                }
-                outputArea.appendChild(line);
-            });
-        }
-
-        function copyResult() {
-            const outputArea = document.getElementById('outputArea');
-            const text = currentData.join('\n');
-            
-            if (!text) {
-                log('복사할 결과가 없습니다.');
-                return;
-            }
-
-            navigator.clipboard.writeText(text).then(() => {
-                log(`결과 복사 완료: ${currentData.length}개 링크`);
-            }).catch(err => {
-                log('복사 실패: ' + err.message);
-            });
-        }
-
-        // 초기 로그
-        log('Saramin URL Manager 시작');
-    </script>
+    <!-- 앱별 스크립트 -->
+    <script src="script.js"></script>
 </body>
 </html>
-

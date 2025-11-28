@@ -1,0 +1,26 @@
+{
+  "name": "Saramin URL Manager",
+  "id": "saramin-url-manager",
+  "description": "Saramin 채용 공고 URL 정규화, 중복 판별 및 제거 도구",
+  "category": "Tools",
+  "icon": "🔗",
+  "tags": [
+    "saramin",
+    "url",
+    "duplicate",
+    "management",
+    "job"
+  ],
+  "version": "1.0.0",
+  "created": "2024-11-29",
+  "updated": "2024-11-29",
+  "author": "Your Name",
+  "features": [
+    "URL 일괄 정규화",
+    "rec_idx 기반 중복 판별",
+    "중복 URL 자동 제거",
+    "일괄 실행 (정규화 + 중복 판별 + 제거)",
+    "실시간 처리 로그",
+    "결과 복사 기능"
+  ]
+}
