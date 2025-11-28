@@ -1,292 +1,74 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whitespace Normalizer</title>
-  <style>
-    :root {
-      --background: var(--color-background, #FCFCF9);
-      --surface: var(--color-surface, #FFFDFD);
-      --text: var(--color-text, #13343B);
-      --primary: var(--color-primary, #21808D);
-      --primary-hover: var(--color-primary-hover, #1D7480);
-      --border: var(--color-border, rgba(94, 82, 64, 0.2));
-      --radius: 8px;
-      --shadow: 0 1px 4px rgba(19,52,59,0.10);
-      --font-family: "Segoe UI", "Inter", system-ui, Arial, sans-serif;
-    }
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      background: var(--background);
-      color: var(--text);
-      font-family: var(--font-family);
-    }
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 32px 8px;
-    }
-    .container {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
-      padding: 32px 24px 28px 24px;
-      max-width: 650px;
-      width: 100%;
-    }
-    h2 {
-      margin-top: 0; margin-bottom: 12px;
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-    label {
-      font-size: 1rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-      display: block;
-    }
-    textarea {
-      width: 100%;
-      min-height: 110px;
-      max-height: 380px;
-      font-size: 1rem;
-      font-family: "Fira Mono", "Consolas", monospace;
-      resize: vertical;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
-    }
-    .button-row {
-      display: flex;
-      gap: 12px;
-      margin: 12px 0 8px 0;
-    }
-    button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      padding: 8px 18px;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background 0.16s;
-      box-shadow: 0 1px 2px rgba(19,52,59,0.06);
-      outline: none;
-    }
-    button:hover, button:focus { background: var(--primary-hover); }
-    .secondary {
-      background: none;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-    }
-    .secondary:hover, .secondary:focus {
-      background: var(--primary);
-      color: #fff;
-    }
-    .result-label {
-      font-weight: 500;
-      margin: 16px 0 0 0;
-      font-size: 0.97rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .copy-btn {
-      background: #F4F9F9;
-      color: var(--primary);
-      border: 1px solid var(--primary);
-      margin-left: 7px;
-      padding: 4px 12px;
-      border-radius: 4px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      outline: none;
-    }
-    .copy-btn:hover, .copy-btn:focus {
-      background: var(--primary);
-      color: #fff;
-    }
-    .log {
-      background: #f8f8f2;
-      color: #222;
-      border-radius: 4px;
-      font-size: 0.93rem;
-      padding: 9px 10px 7px 10px;
-      margin: 7px 0 0 0;
-      line-height: 1.6;
-      border: 1px solid #E6DFDF;
-      overflow-x: auto;
-      max-height: 110px;
-    }
-    .footer {
-      margin-top: 28px;
-      font-size: 0.93rem;
-      color: #668488;
-      text-align: right;
-    }
-    @media (max-width: 700px) {
-      .container { padding: 18px 2vw; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="유니코드 특수 공백/줄바꿈 문자 정규화 도구">
+    <meta name="theme-color" content="#21808d">
+    <title>Whitespace Normalizer - Web Apps</title>
+
+    <!-- 공통 스타일 -->
+    <link rel="stylesheet" href="../../styles/common.css">
+
+    <!-- 앱별 스타일 -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Whitespace Normalizer</h2>
-    <label for="input-text">입력 텍스트 (붙여넣기)</label>
-    <textarea id="input-text" placeholder="여기에 텍스트를 붙여넣으세요..."></textarea>
-    <div class="button-row">
-      <button id="normalize-btn" type="button">정규화 실행</button>
-      <button id="reset-btn" class="secondary" type="button">초기화</button>
+    <!-- 네비게이션 헤더 -->
+    <div class="app-header">
+        <h1>✨ Whitespace Normalizer</h1>
+        <p>유니코드 특수 공백/줄바꿈 문자 정규화</p>
     </div>
-    <div class="result-label">
-      정규화된 결과
-      <button class="copy-btn" type="button" id="copy-btn" title="복사">복사</button>
+
+    <!-- 경로 표시 (Breadcrumb) -->
+    <nav class="breadcrumb">
+        <a href="../../">Dashboard</a>
+        <span>/</span>
+        <a href="../../#Tools">Tools</a>
+        <span>/</span>
+        <span>Whitespace Normalizer</span>
+    </nav>
+
+    <!-- 앱 콘텐츠 -->
+    <div class="app-content">
+        <div class="app-container">
+            <!-- 입력 섹션 -->
+            <div class="section">
+                <label for="input-text" class="section-title">📥 입력 텍스트 (붙여넣기)</label>
+                <textarea id="input-text" class="textarea" placeholder="여기에 텍스트를 붙여넣으세요..."></textarea>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" id="normalize-btn">정규화 실행</button>
+                    <button class="btn btn-secondary" id="reset-btn">초기화</button>
+                </div>
+            </div>
+
+            <!-- 결과 섹션 -->
+            <div class="section">
+                <div class="result-label">
+                    📤 정규화된 결과
+                    <button class="btn-copy" id="copy-btn">복사</button>
+                </div>
+                <textarea id="output-text" class="textarea" readonly placeholder="결과가 여기에 표시됩니다..."></textarea>
+            </div>
+
+            <!-- 로그 섹션 -->
+            <div class="section">
+                <div class="section-title">📝 처리 내역 (Log)</div>
+                <div class="log-pane" id="log-pane"></div>
+            </div>
+
+            <!-- 설명 -->
+            <div class="footer">
+                스페이스/줄바꿈/특수 공백 문자 정규화 앱 - 16종류 유니코드 특수 문자 처리
+            </div>
+        </div>
     </div>
-    <textarea id="output-text" readonly placeholder="결과가 여기에 표시됩니다..."></textarea>
-    <div class="result-label" style="margin-top:13px;">정규화 내역 (Log)</div>
-    <div class="log" id="log-pane"></div>
-    <div class="footer">스페이스/줄바꿈/특수 공백 문자 정규화 앱 - 표준적 텍스트 변환 지원</div>
-  </div>
-  <script>
-    // 유니코드 특수 공백 문자 목록
-    const SPACE_CHARS = [
-      "\u00A0", // NO-BREAK SPACE (&nbsp;)
-      "\u1680", // OGHAM SPACE MARK
-      "\u2000", // EN QUAD
-      "\u2001", // EM QUAD
-      "\u2002", // EN SPACE
-      "\u2003", // EM SPACE
-      "\u2004", // THREE-PER-EM SPACE
-      "\u2005", // FOUR-PER-EM SPACE
-      "\u2006", // SIX-PER-EM SPACE
-      "\u2007", // FIGURE SPACE
-      "\u2008", // PUNCTUATION SPACE
-      "\u2009", // THIN SPACE
-      "\u200A", // HAIR SPACE
-      "\u202F", // NARROW NO-BREAK SPACE
-      "\u205F", // MEDIUM MATHEMATICAL SPACE
-      "\u3000"  // IDEOGRAPHIC SPACE
-    ];
-    // 유니코드 특수 줄바꿈 문자 목록
-    const LINEBREAKS = [
-      "\u2028", // LINE SEPARATOR
-      "\u2029", // PARAGRAPH SEPARATOR
-      "\r\n",   // Windows
-      "\n",     // Unix
-      "\r"      // Mac old
-    ];
 
-    const logPane = document.getElementById('log-pane');
+    <!-- 공통 유틸리티 스크립트 -->
+    <script src="../../scripts/common.js"></script>
 
-    // 변환 함수
-    function normalizeWhitespace(text) {
-      let log = [];
-      let orig = text;
-
-      // 1. 특수 공백(NBSP 등)을 일반 스페이스(' ')로 변환
-      SPACE_CHARS.forEach(char => {
-        if (text.includes(char)) {
-          let name = char === "\u00A0" ? "NO-BREAK SPACE" :
-            char === "\u1680" ? "OGHAM SPACE MARK" :
-            char === "\u2000" ? "EN QUAD" :
-            char === "\u2001" ? "EM QUAD" :
-            char === "\u2002" ? "EN SPACE" :
-            char === "\u2003" ? "EM SPACE" :
-            char === "\u2004" ? "THREE-PER-EM SPACE" :
-            char === "\u2005" ? "FOUR-PER-EM SPACE" :
-            char === "\u2006" ? "SIX-PER-EM SPACE" :
-            char === "\u2007" ? "FIGURE SPACE" :
-            char === "\u2008" ? "PUNCTUATION SPACE" :
-            char === "\u2009" ? "THIN SPACE" :
-            char === "\u200A" ? "HAIR SPACE" :
-            char === "\u202F" ? "NARROW NO-BREAK SPACE" :
-            char === "\u205F" ? "MEDIUM MATHEMATICAL SPACE" :
-            char === "\u3000" ? "IDEOGRAPHIC SPACE" : "UNKNOWN";
-          text = text.split(char).join(" ");
-          log.push(`"${name}"(${char.charCodeAt(0).toString(16)}) → 일반 스페이스( )`);
-        }
-      });
-
-      // 2. 특수 줄바꿈 문자를 표준 줄바꿈(\n)으로 변환
-      ["\u2028","\u2029","\r\n","\r"].forEach(lineEnd => {
-        if(text.includes(lineEnd)){
-          let name = lineEnd === "\u2028" ? "LINE SEPARATOR(2028)" :
-            lineEnd === "\u2029" ? "PARAGRAPH SEPARATOR(2029)" :
-            lineEnd === "\r\n" ? "Windows CRLF(\\r\\n)" :
-            lineEnd === "\r" ? "Old Mac CR(\\r)" : "unknown";
-          text = text.split(lineEnd).join("\n");
-          log.push(`${name} → 표준 줄바꿈(\\n)`);
-        }
-      });
-
-      // 3. 연속된 스페이스 1개로 압축
-      if (/(  +)/.test(text)) {
-        text = text.replace(/ +/g, " ");
-        log.push("연속된 스페이스 → 1개로 변환");
-      }
-
-      // 4. 각 줄 앞뒤의 불필요 스페이스 제거
-      let before = text;
-      text = text.split('\n').map(line => line.trim()).join('\n');
-      if (text !== before) log.push("각 줄 앞/뒤 스페이스 제거");
-
-      // 5. 연속된 빈 줄을 1개로 정규화
-      before = text;
-      text = text.replace(/\n{3,}/g, '\n\n');
-      if (text !== before) log.push("3개↑ 연속 빈줄 → 2개 줄로 변환");
-
-      // 6. (\t 등) 탭 문자를 4스페이스로 변환
-      if (text.includes("\t")) {
-        text = text.replace(/\t/g, "    ");
-        log.push('탭(\\t) → 4개 스페이스로 변환');
-      }
-
-      // 7. 전체 앞뒤 불필요한 줄/공백 제거
-      before = text;
-      text = text.replace(/^\s+|\s+$/g, '');
-      if (text !== before) log.push("전체 앞/뒤 빈줄 및 공백 제거");
-
-      if(log.length === 0) log.push("수정사항 없음 (이미 표준상태)");
-      return {text, log};
-    }
-
-    // 버튼 핸들링
-    document.getElementById('normalize-btn').onclick = function() {
-      const inp = document.getElementById('input-text').value;
-      const norm = normalizeWhitespace(inp);
-      document.getElementById('output-text').value = norm.text;
-      logPane.textContent = norm.log.map(line=>"• "+line).join("\n");
-    };
-
-    document.getElementById('reset-btn').onclick = function() {
-      document.getElementById('input-text').value = "";
-      document.getElementById('output-text').value = "";
-      logPane.textContent = "";
-    };
-
-    document.getElementById('copy-btn').onclick = function() {
-      const out = document.getElementById('output-text');
-      out.select();
-      document.execCommand('copy');
-      this.textContent = "복사됨";
-      setTimeout(() => { this.textContent = "복사"; }, 900);
-      out.setSelectionRange(0,0);
-    };
-
-    // 드래그로 결과 선택 지원
-    document.getElementById('output-text').addEventListener('dblclick', function(e) {
-      this.select();
-    });
-  </script>
+    <!-- 앱별 스크립트 -->
+    <script src="script.js"></script>
 </body>
 </html>

@@ -1,0 +1,26 @@
+{
+  "name": "Whitespace Normalizer",
+  "id": "whitespace-normalizer",
+  "description": "유니코드 특수 공백/줄바꿈 문자 정규화 도구",
+  "category": "Tools",
+  "icon": "✨",
+  "tags": [
+    "whitespace",
+    "unicode",
+    "normalization",
+    "text",
+    "utility"
+  ],
+  "version": "1.0.0",
+  "created": "2024-11-29",
+  "updated": "2024-11-29",
+  "author": "Your Name",
+  "features": [
+    "유니코드 특수 공백 정규화 (16종류)",
+    "특수 줄바꿈 문자 표준화",
+    "연속 스페이스 압축",
+    "각 줄 앞뒤 공백 제거",
+    "탭 문자 4칸 스페이스 변환",
+    "상세 처리 로그"
+  ]
+}
