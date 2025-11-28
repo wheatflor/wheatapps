@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Web Apps Dashboard - 웹앱 모음">
-    <meta name="theme-color" content="#21808d">
+    <meta name="description" content="Web Apps Dashboard">
     <title>Web Apps Dashboard</title>
 
     <style>
@@ -17,195 +16,59 @@
             --border: rgba(94, 82, 64, 0.2);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
 
-        html, body {
-            height: 100%;
-        }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, #1d7480 100%); color: white; padding: 3rem 2rem; text-align: center; }
+        .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #1d7480 100%);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: 600; color: var(--primary); }
+        .stat-label { font-size: 0.9rem; color: #999; margin-top: 0.5rem; }
 
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
+        .controls { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .tab-button { padding: 0.6rem 1.2rem; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s; }
+        .tab-button.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-button:hover { transform: translateY(-2px); }
 
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
+        .search { flex: 1; min-width: 200px; }
+        .search input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+        .section-title { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 1.5rem 0; }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+        .tree-view { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .tree-item { margin-left: 1rem; padding: 0.5rem 0; }
+        .tree-category { font-weight: 600; color: var(--primary); cursor: pointer; user-select: none; }
+        .tree-app { margin-left: 1rem; padding: 0.5rem; border-radius: 6px; }
+        .tree-app:hover { background: rgba(33, 128, 141, 0.1); }
+        .tree-app a { text-decoration: none; color: var(--text); }
+        .tree-app a:hover { color: var(--primary); }
 
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
+        .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+        .app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
 
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
+        .app-header { background: rgba(33, 128, 141, 0.1); padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .app-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .app-name { font-size: 1.1rem; font-weight: 600; }
 
-        .stat-label {
-            font-size: 0.9rem;
-            color: #999;
-            margin-top: 0.5rem;
-        }
+        .app-body { padding: 1.5rem; }
+        .app-desc { font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
+        .app-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+        .app-tag { background: rgba(33, 128, 141, 0.1); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 16px; font-size: 0.75rem; }
+        .app-link { display: inline-block; background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
+        .app-link:hover { background: var(--primary-hover); }
 
-        .apps-section {
-            margin-top: 2rem;
-        }
-
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .app-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .app-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            border-color: var(--primary);
-        }
-
-        .app-header {
-            background: rgba(33, 128, 141, 0.1);
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .app-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .app-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .app-body {
-            padding: 1.5rem;
-        }
-
-        .app-desc {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-
-        .app-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .app-tag {
-            display: inline-block;
-            background: rgba(33, 128, 141, 0.1);
-            color: var(--primary);
-            padding: 0.25rem 0.75rem;
-            border-radius: 16px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .app-link {
-            display: inline-block;
-            background: var(--primary);
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .app-link:hover {
-            background: var(--primary-hover);
-            transform: translateX(2px);
-        }
-
-        .footer {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            color: #999;
-            font-size: 0.9rem;
-        }
+        .hidden { display: none; }
 
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            .apps-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #999;
+            .header h1 { font-size: 1.8rem; }
+            .container { padding: 1rem; }
+            .apps-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -226,89 +89,126 @@
                 <div class="stat-label">Categories</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="last-updated">-</div>
+                <div class="stat-value" id="updated-time">-</div>
                 <div class="stat-label">Last Updated</div>
             </div>
         </div>
 
-        <div style="margin-bottom: 2rem;">
-            <input type="text" id="search-input" placeholder="🔍 앱 검색..." 
-                style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
-        </div>
-
-        <div class="apps-section">
-            <h2 class="section-title">Tools</h2>
-            <div class="apps-grid" id="apps-container">
-                <div class="loading">앱을 불러오는 중...</div>
+        <div class="controls">
+            <button class="tab-button active" onclick="switchView('category')">📂 카테고리별</button>
+            <button class="tab-button" onclick="switchView('tree')">🌳 폴더구조</button>
+            <div class="search">
+                <input type="text" id="search-input" placeholder="🔍 앱 검색...">
             </div>
         </div>
 
-        <div class="footer">
-            <p>🔄 캐시버스트: 20251128170645</p>
-            <p style="margin-top: 0.5rem; font-size: 0.8rem;">Last Updated: <span id="updated-time">-</span></p>
+        <!-- 카테고리별 뷰 -->
+        <div id="category-view">
+            <div id="category-container"></div>
+        </div>
+
+        <!-- 폴더구조 뷰 -->
+        <div id="tree-view" class="hidden">
+            <div class="tree-view" id="tree-container"></div>
         </div>
     </div>
 
     <script>
+        let appData = {};
+
         async function loadApps() {
             try {
-                const timestamp = "20251128170645";
-                const response = await fetch('data.json?t=' + timestamp);
-                const data = await response.json();
-                renderApps(data);
-                updateStats(data);
+                const response = await fetch('data.json?t=' + Date.now());
+                appData = await response.json();
+                renderCategory();
+                renderTree();
+                updateStats();
             } catch (error) {
-                console.error('데이터 로드 실패:', error);
-                document.getElementById('apps-container').innerHTML = 
-                    '<div class="loading">❌ 데이터를 불러올 수 없습니다.</div>';
+                console.error('❌ 데이터 로드 실패:', error);
             }
         }
 
-        function renderApps(data) {
-            const container = document.getElementById('apps-container');
-            const apps = data.apps || [];
+        function renderCategory() {
+            const container = document.getElementById('category-container');
+            const categories = appData.categories || [];
 
-            if (apps.length === 0) {
-                container.innerHTML = '<div class="loading">앱이 없습니다.</div>';
-                return;
-            }
-
-            container.innerHTML = apps.map(app => `
-                <div class="app-card">
-                    <div class="app-header">
-                        <div class="app-icon">${app.icon || '📦'}</div>
-                        <div class="app-name">${app.name}</div>
-                    </div>
-                    <div class="app-body">
-                        <p class="app-desc">${app.description}</p>
-                        <div class="app-tags">
-                            ${app.tags ? app.tags.map(tag => `<span class="app-tag">${tag}</span>`).join('') : ''}
+            let html = '';
+            categories.forEach(category => {
+                const categoryApps = (appData.apps || []).filter(app => app.category === category);
+                html += `
+                    <div style="margin-bottom: 2rem;">
+                        <h2 class="section-title">${category}</h2>
+                        <div class="apps-grid">
+                            ${categoryApps.map(app => `
+                                <div class="app-card">
+                                    <div class="app-header">
+                                        <div class="app-icon">${app.icon || '📦'}</div>
+                                        <div class="app-name">${app.name}</div>
+                                    </div>
+                                    <div class="app-body">
+                                        <p class="app-desc">${app.description}</p>
+                                        <div class="app-tags">
+                                            ${(app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
+                                        </div>
+                                        <a href="${app.url}" class="app-link">열기 →</a>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
-                        <a href="${app.url}" class="app-link">열기 →</a>
                     </div>
-                </div>
-            `).join('');
+                `;
+            });
+
+            container.innerHTML = html || '<p>앱이 없습니다.</p>';
         }
 
-        function updateStats(data) {
-            document.getElementById('total-apps').textContent = data.apps ? data.apps.length : 0;
-            document.getElementById('total-categories').textContent = data.categories ? data.categories.length : 0;
+        function renderTree() {
+            const container = document.getElementById('tree-container');
+            const categories = appData.categories || [];
+
+            let html = '<ul>';
+            categories.forEach(category => {
+                const categoryApps = (appData.apps || []).filter(app => app.category === category);
+                html += `
+                    <li class="tree-item">
+                        <div class="tree-category">📂 ${category}</div>
+                        <ul>
+                            ${categoryApps.map(app => `
+                                <li class="tree-app">
+                                    <a href="${app.url}">${app.icon} ${app.name}</a>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </li>
+                `;
+            });
+            html += '</ul>';
+
+            container.innerHTML = html;
+        }
+
+        function updateStats() {
+            document.getElementById('total-apps').textContent = appData.apps?.length || 0;
+            document.getElementById('total-categories').textContent = appData.categories?.length || 0;
             document.getElementById('updated-time').textContent = new Date().toLocaleString('ko-KR');
+        }
+
+        function switchView(view) {
+            document.getElementById('category-view').classList.toggle('hidden', view !== 'category');
+            document.getElementById('tree-view').classList.toggle('hidden', view !== 'tree');
+
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
         }
 
         document.getElementById('search-input').addEventListener('input', (e) => {
             const keyword = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('.app-card');
-
-            cards.forEach(card => {
+            document.querySelectorAll('.app-card').forEach(card => {
                 const name = card.querySelector('.app-name').textContent.toLowerCase();
                 const desc = card.querySelector('.app-desc').textContent.toLowerCase();
-
-                if (name.includes(keyword) || desc.includes(keyword)) {
-                    card.style.display = '';
-                } else {
-                    card.style.display = 'none';
-                }
+                card.style.display = name.includes(keyword) || desc.includes(keyword) ? '' : 'none';
             });
         });
 
