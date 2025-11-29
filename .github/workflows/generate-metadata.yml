@@ -1,0 +1,207 @@
+name: Generate Metadata
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate-metadata:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Create metadata script
+        run: |
+          cat > generate-metadata.js << 'SCRIPT_EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          // 설정
+          const APPS_DIR = './apps';
+          const DATA_DIR = './_data';
+          const BASE_URL = 'apps';
+
+          // _data 디렉토리 생성
+          if (!fs.existsSync(DATA_DIR)) {
+            fs.mkdirSync(DATA_DIR, { recursive: true });
+          }
+
+          // 1. 폴더트리 생성
+          function buildTreeStructure(dir, basePath = '') {
+            const items = [];
+
+            try {
+              const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+              entries.forEach((entry) => {
+                // .로 시작하는 파일/폴더 제외
+                if (entry.name.startsWith('.')) return;
+
+                const fullPath = path.join(dir, entry.name);
+                const relativePath = basePath ? path.join(basePath, entry.name) : entry.name;
+
+                if (entry.isDirectory()) {
+                  items.push({
+                    name: entry.name,
+                    type: 'directory',
+                    path: relativePath,
+                    children: buildTreeStructure(fullPath, relativePath),
+                  });
+                } else {
+                  items.push({
+                    name: entry.name,
+                    type: 'file',
+                    path: relativePath,
+                  });
+                }
+              });
+            } catch (error) {
+              console.error(`Error reading directory ${dir}:`, error);
+            }
+
+            return items;
+          }
+
+          // 2. 모든 앱의 메타데이터 수집
+          function collectMetadata() {
+            const apps = [];
+
+            try {
+              const appDirs = fs.readdirSync(APPS_DIR, { withFileTypes: true });
+
+              appDirs.forEach((entry) => {
+                if (!entry.isDirectory() || entry.name.startsWith('.')) return;
+
+                const metadataPath = path.join(APPS_DIR, entry.name, 'metadata.json');
+                const indexPath = path.join(APPS_DIR, entry.name, 'index.html');
+
+                if (fs.existsSync(metadataPath) && fs.existsSync(indexPath)) {
+                  try {
+                    const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+                    // 접속 경로 자동 생성
+                    metadata.path = `${BASE_URL}/${entry.name}/index.html`;
+                    apps.push(metadata);
+                  } catch (error) {
+                    console.error(`Error parsing metadata for ${entry.name}:`, error);
+                  }
+                }
+              });
+            } catch (error) {
+              console.error(`Error reading apps directory:`, error);
+            }
+
+            return apps.sort((a, b) => a.id.localeCompare(b.id));
+          }
+
+          // 3. 통계 생성
+          function generateStats(apps) {
+            const stats = {
+              totalApps: apps.length,
+              lastUpdated: new Date().toLocaleString('ko-KR', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              }).replace(/\. /g, '-').replace(/\. /g, ' '),
+              appsByTag: {},
+            };
+
+            apps.forEach((app) => {
+              if (app.tags && Array.isArray(app.tags)) {
+                app.tags.forEach((tag) => {
+                  stats.appsByTag[tag] = (stats.appsByTag[tag] || 0) + 1;
+                });
+              }
+            });
+
+            return stats;
+          }
+
+          // 메인 실행
+          try {
+            console.log('🔄 Generating metadata...');
+
+            // 폴더트리 생성
+            console.log('📁 Building directory tree...');
+            const treeStructure = buildTreeStructure(APPS_DIR, BASE_URL);
+            const treeData = {
+              generatedAt: new Date().toISOString(),
+              structure: {
+                name: 'apps',
+                type: 'directory',
+                path: BASE_URL,
+                children: treeStructure,
+              },
+            };
+            fs.writeFileSync(path.join(DATA_DIR, 'tree.json'), JSON.stringify(treeData, null, 2));
+            console.log('✅ tree.json generated');
+
+            // 메타데이터 수집
+            console.log('📝 Collecting app metadata...');
+            const apps = collectMetadata();
+            const metadataData = {
+              generatedAt: new Date().toISOString(),
+              totalApps: apps.length,
+              lastUpdated: new Date().toLocaleString('ko-KR', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              }).replace(/\. /g, '-').replace(/\. /g, ' '),
+              apps: apps,
+            };
+            fs.writeFileSync(path.join(DATA_DIR, 'metadata.json'), JSON.stringify(metadataData, null, 2));
+            console.log(`✅ metadata.json generated (${apps.length} apps)`);
+
+            // 통계 생성
+            console.log('📊 Generating statistics...');
+            const stats = generateStats(apps);
+            fs.writeFileSync(path.join(DATA_DIR, 'stats.json'), JSON.stringify(stats, null, 2));
+            console.log('✅ stats.json generated');
+
+            console.log('\n✨ All metadata generated successfully!');
+          } catch (error) {
+            console.error('❌ Error generating metadata:', error);
+            process.exit(1);
+          }
+          SCRIPT_EOF
+
+      - name: Run metadata generation
+        run: node generate-metadata.js
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet; then
+            echo "✅ No changes to commit"
+          else
+            git add _data/
+            git commit -m "🔄 auto: update metadata [skip ci]"
+            git push
+          fi
+
+      - name: Cleanup
+        run: rm -f generate-metadata.js
