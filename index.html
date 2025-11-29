@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Web Apps Dashboard">
+    <meta name="description" content="Web Apps Dashboard - 웹앱 모음">
     <title>Web Apps Dashboard</title>
-
     <style>
         :root {
             --primary: #21808d;
@@ -15,61 +14,37 @@
             --text: #134252;
             --border: rgba(94, 82, 64, 0.2);
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
-
         .header { background: linear-gradient(135deg, var(--primary) 0%, #1d7480 100%); color: white; padding: 3rem 2rem; text-align: center; }
         .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .header p { font-size: 1.1rem; opacity: 0.9; }
-
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-
         .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
         .stat-value { font-size: 2rem; font-weight: 600; color: var(--primary); }
         .stat-label { font-size: 0.9rem; color: #999; margin-top: 0.5rem; }
-
         .controls { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
         .tab-button { padding: 0.6rem 1.2rem; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s; }
         .tab-button.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .tab-button:hover { transform: translateY(-2px); }
-
         .search { flex: 1; min-width: 200px; }
         .search input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
-
         .section-title { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 1.5rem 0; }
-
-        .tree-view { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
-        .tree-item { margin-left: 1rem; padding: 0.5rem 0; }
-        .tree-category { font-weight: 600; color: var(--primary); cursor: pointer; user-select: none; }
-        .tree-app { margin-left: 1rem; padding: 0.5rem; border-radius: 6px; }
-        .tree-app:hover { background: rgba(33, 128, 141, 0.1); }
-        .tree-app a { text-decoration: none; color: var(--text); }
-        .tree-app a:hover { color: var(--primary); }
-
         .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
         .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s; }
         .app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-
         .app-header { background: rgba(33, 128, 141, 0.1); padding: 1.5rem; border-bottom: 1px solid var(--border); }
         .app-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .app-name { font-size: 1.1rem; font-weight: 600; }
-
         .app-body { padding: 1.5rem; }
         .app-desc { font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
         .app-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
         .app-tag { background: rgba(33, 128, 141, 0.1); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 16px; font-size: 0.75rem; }
         .app-link { display: inline-block; background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
         .app-link:hover { background: var(--primary-hover); }
-
-        .hidden { display: none; }
-
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8rem; }
-            .container { padding: 1rem; }
-            .apps-grid { grid-template-columns: 1fr; }
-        }
+        .loading { text-align: center; padding: 2rem; color: #999; }
+        .error { color: red; padding: 1rem; background: rgba(255,0,0,0.1); border-radius: 8px; }
+        @media (max-width: 768px) { .header h1 { font-size: 1.8rem; } .container { padding: 1rem; } .apps-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -77,7 +52,6 @@
         <h1>🚀 Web Apps Dashboard</h1>
         <p>당신의 웹앱 모음</p>
     </div>
-
     <div class="container">
         <div class="stats">
             <div class="stat-card">
@@ -88,119 +62,56 @@
                 <div class="stat-value" id="total-categories">0</div>
                 <div class="stat-label">Categories</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-value" id="updated-time">-</div>
-                <div class="stat-label">Last Updated</div>
-            </div>
         </div>
-
-        <div class="controls">
-            <button class="tab-button active" onclick="switchView('category')">📂 카테고리별</button>
-            <button class="tab-button" onclick="switchView('tree')">🌳 폴더구조</button>
-            <div class="search">
-                <input type="text" id="search-input" placeholder="🔍 앱 검색...">
-            </div>
+        <div class="search">
+            <input type="text" id="search-input" placeholder="🔍 앱 검색...">
         </div>
-
-        <!-- 카테고리별 뷰 -->
-        <div id="category-view">
-            <div id="category-container"></div>
-        </div>
-
-        <!-- 폴더구조 뷰 -->
-        <div id="tree-view" class="hidden">
-            <div class="tree-view" id="tree-container"></div>
+        <div id="apps-container" class="apps-grid">
+            <div class="loading">앱을 불러오는 중...</div>
         </div>
     </div>
-
     <script>
-        let appData = {};
-
         async function loadApps() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
-                appData = await response.json();
-                renderCategory();
-                renderTree();
-                updateStats();
+                if (!response.ok) throw new Error('data.json not found');
+                const data = await response.json();
+                renderApps(data);
+                updateStats(data);
             } catch (error) {
-                console.error('❌ 데이터 로드 실패:', error);
+                console.error('데이터 로드 실패:', error);
+                document.getElementById('apps-container').innerHTML = 
+                    '<div class="error">❌ 데이터를 불러올 수 없습니다. data.json이 필요합니다.</div>';
             }
         }
 
-        function renderCategory() {
-            const container = document.getElementById('category-container');
-            const categories = appData.categories || [];
-
-            let html = '';
-            categories.forEach(category => {
-                const categoryApps = (appData.apps || []).filter(app => app.category === category);
-                html += `
-                    <div style="margin-bottom: 2rem;">
-                        <h2 class="section-title">${category}</h2>
-                        <div class="apps-grid">
-                            ${categoryApps.map(app => `
-                                <div class="app-card">
-                                    <div class="app-header">
-                                        <div class="app-icon">${app.icon || '📦'}</div>
-                                        <div class="app-name">${app.name}</div>
-                                    </div>
-                                    <div class="app-body">
-                                        <p class="app-desc">${app.description}</p>
-                                        <div class="app-tags">
-                                            ${(app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
-                                        </div>
-                                        <a href="${app.url}" class="app-link">열기 →</a>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
+        function renderApps(data) {
+            const container = document.getElementById('apps-container');
+            const apps = data.apps || [];
+            if (apps.length === 0) {
+                container.innerHTML = '<div class="loading">앱이 없습니다.</div>';
+                return;
+            }
+            container.innerHTML = apps.map(app => `
+                <div class="app-card">
+                    <div class="app-header">
+                        <div class="app-icon">${app.icon || '📦'}</div>
+                        <div class="app-name">${app.name}</div>
                     </div>
-                `;
-            });
-
-            container.innerHTML = html || '<p>앱이 없습니다.</p>';
+                    <div class="app-body">
+                        <p class="app-desc">${app.description}</p>
+                        <div class="app-tags">
+                            ${(app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
+                        </div>
+                        <a href="${app.url}" class="app-link">열기 →</a>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function renderTree() {
-            const container = document.getElementById('tree-container');
-            const categories = appData.categories || [];
-
-            let html = '<ul>';
-            categories.forEach(category => {
-                const categoryApps = (appData.apps || []).filter(app => app.category === category);
-                html += `
-                    <li class="tree-item">
-                        <div class="tree-category">📂 ${category}</div>
-                        <ul>
-                            ${categoryApps.map(app => `
-                                <li class="tree-app">
-                                    <a href="${app.url}">${app.icon} ${app.name}</a>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </li>
-                `;
-            });
-            html += '</ul>';
-
-            container.innerHTML = html;
-        }
-
-        function updateStats() {
-            document.getElementById('total-apps').textContent = appData.apps?.length || 0;
-            document.getElementById('total-categories').textContent = appData.categories?.length || 0;
-            document.getElementById('updated-time').textContent = new Date().toLocaleString('ko-KR');
-        }
-
-        function switchView(view) {
-            document.getElementById('category-view').classList.toggle('hidden', view !== 'category');
-            document.getElementById('tree-view').classList.toggle('hidden', view !== 'tree');
-
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
+        function updateStats(data) {
+            document.getElementById('total-apps').textContent = data.apps?.length || 0;
+            document.getElementById('total-categories').textContent = data.categories?.length || 0;
         }
 
         document.getElementById('search-input').addEventListener('input', (e) => {
