@@ -1,4 +1,5 @@
 {
+  "id": "whitespace-normalizer",
   "name": "Whitespace Normalizer",
   "description": "유니코드 특수 공백/줄바꿈 문자 정규화 도구",
   "icon": "✨",
@@ -16,5 +17,9 @@
     "각 줄 앞뒤 공백 제거",
     "탭 문자 4칸 스페이스 변환",
     "상세 처리 로그"
-  ]
+  ],
+  "version": "1.0.0",
+  "author": "Web App Generator",
+  "createdAt": "2025-01-15T10:45:00Z",
+  "updatedAt": "2025-01-15T10:45:00Z"
 }
