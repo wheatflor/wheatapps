@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Web Apps Dashboard - 웹앱 모음">
-    <title>Web Apps Dashboard</title>
+    <meta name="description" content="Web Apps Dashboard">
+    <title>🚀 Web Apps Dashboard</title>
     <style>
         :root {
             --primary: #21808d;
@@ -15,23 +15,37 @@
             --border: rgba(94, 82, 64, 0.2);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
-        .header { background: linear-gradient(135deg, var(--primary) 0%, #1d7480 100%); color: white; padding: 3rem 2rem; text-align: center; }
+
+        .header { background: linear-gradient(135deg, var(--primary) 0%, #1d7480 100%); color: white; padding: 3rem 2rem; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .header p { font-size: 1.1rem; opacity: 0.9; }
+
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; }
         .stat-value { font-size: 2rem; font-weight: 600; color: var(--primary); }
-        .stat-label { font-size: 0.9rem; color: #999; margin-top: 0.5rem; }
-        .controls { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
-        .tab-button { padding: 0.6rem 1.2rem; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s; }
-        .tab-button.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .search { flex: 1; min-width: 200px; }
-        .search input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
-        .section-title { font-size: 1.5rem; font-weight: 600; margin: 2rem 0 1.5rem 0; }
+        .stat-label { font-size: 0.85rem; color: #999; margin-top: 0.5rem; }
+
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .search-box { display: flex; align-items: center; }
+        .search-box input { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem; }
+
+        .tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tab-btn { padding: 0.6rem 1.2rem; border: 1px solid var(--border); background: var(--surface); border-radius: 8px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s; font-weight: 500; }
+        .tab-btn:hover { transform: translateY(-2px); }
+        .tab-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .section-title { font-size: 1.3rem; font-weight: 600; margin: 1.5rem 0 1rem 0; }
+
+        /* Grid View */
         .apps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
-        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+        .app-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s; cursor: pointer; }
         .app-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
         .app-header { background: rgba(33, 128, 141, 0.1); padding: 1.5rem; border-bottom: 1px solid var(--border); }
         .app-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -42,9 +56,38 @@
         .app-tag { background: rgba(33, 128, 141, 0.1); color: var(--primary); padding: 0.25rem 0.75rem; border-radius: 16px; font-size: 0.75rem; }
         .app-link { display: inline-block; background: var(--primary); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
         .app-link:hover { background: var(--primary-hover); }
+
+        /* List View */
+        .app-list { list-style: none; }
+        .app-list-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 1rem; cursor: pointer; transition: all 0.3s; }
+        .app-list-item:hover { background: rgba(33, 128, 141, 0.05); transform: translateX(4px); }
+        .app-list-icon { font-size: 2rem; min-width: 50px; }
+        .app-list-info { flex: 1; }
+        .app-list-name { font-weight: 600; margin-bottom: 0.25rem; }
+        .app-list-desc { font-size: 0.85rem; color: #999; }
+        .app-list-link { color: var(--primary); text-decoration: none; font-weight: 500; }
+
+        /* Tree View */
+        .tree-view { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .tree-category { font-weight: 600; color: var(--primary); margin: 1rem 0 0.5rem 0; cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem; }
+        .tree-category:hover { text-decoration: underline; }
+        .tree-icon { display: inline-block; transition: transform 0.2s; }
+        .tree-icon.collapsed { transform: rotate(-90deg); }
+        .tree-apps { list-style: none; margin-left: 2rem; }
+        .tree-app { padding: 0.5rem 0; margin: 0.25rem 0; }
+        .tree-app a { text-decoration: none; color: var(--text); display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; border-radius: 6px; }
+        .tree-app a:hover { background: rgba(33, 128, 141, 0.1); color: var(--primary); }
+
         .loading { text-align: center; padding: 2rem; color: #999; }
-        .error { color: red; padding: 1rem; background: rgba(255,0,0,0.1); border-radius: 8px; }
-        @media (max-width: 768px) { .header h1 { font-size: 1.8rem; } .container { padding: 1rem; } .apps-grid { grid-template-columns: 1fr; } }
+        .error { color: #d32f2f; background: rgba(211, 47, 47, 0.1); border: 1px solid rgba(211, 47, 47, 0.2); padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+
+        @media (max-width: 768px) { 
+            .header h1 { font-size: 1.8rem; } 
+            .container { padding: 1rem; }
+            .controls { grid-template-columns: 1fr; }
+            .apps-grid { grid-template-columns: 1fr; }
+            .tabs { justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -52,6 +95,7 @@
         <h1>🚀 Web Apps Dashboard</h1>
         <p>당신의 웹앱 모음</p>
     </div>
+
     <div class="container">
         <div class="stats">
             <div class="stat-card">
@@ -62,32 +106,71 @@
                 <div class="stat-value" id="total-categories">0</div>
                 <div class="stat-label">Categories</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-value" id="updated-time">-</div>
+                <div class="stat-label">Updated</div>
+            </div>
         </div>
-        <div class="search">
-            <input type="text" id="search-input" placeholder="🔍 앱 검색...">
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="🔍 앱 검색...">
+            </div>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('search')">🔍 검색</button>
+                <button class="tab-btn" onclick="switchTab('list')">📋 목록</button>
+                <button class="tab-btn" onclick="switchTab('tree')">🌳 구조</button>
+            </div>
         </div>
-        <div id="apps-container" class="apps-grid">
-            <div class="loading">앱을 불러오는 중...</div>
+
+        <!-- 검색 뷰 -->
+        <div id="search-view" class="view active">
+            <div id="search-container" class="apps-grid">
+                <div class="loading">앱을 불러오는 중...</div>
+            </div>
+        </div>
+
+        <!-- 목록 뷰 -->
+        <div id="list-view" class="view">
+            <ul id="list-container" class="app-list">
+                <div class="loading">앱을 불러오는 중...</div>
+            </ul>
+        </div>
+
+        <!-- 트리 뷰 -->
+        <div id="tree-view" class="view">
+            <div id="tree-container" class="tree-view">
+                <div class="loading">폴더 구조를 불러오는 중...</div>
+            </div>
         </div>
     </div>
+
     <script>
-        async function loadApps() {
+        let appData = {};
+
+        async function loadData() {
             try {
                 const response = await fetch('data.json?t=' + Date.now());
                 if (!response.ok) throw new Error('data.json not found');
-                const data = await response.json();
-                renderApps(data);
-                updateStats(data);
+                appData = await response.json();
+                renderAllViews();
+                updateStats();
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
-                document.getElementById('apps-container').innerHTML = 
-                    '<div class="error">❌ 데이터를 불러올 수 없습니다. data.json이 필요합니다.</div>';
+                document.getElementById('search-container').innerHTML = 
+                    '<div class="error">❌ 데이터를 불러올 수 없습니다.</div>';
             }
         }
 
-        function renderApps(data) {
-            const container = document.getElementById('apps-container');
-            const apps = data.apps || [];
+        function renderAllViews() {
+            renderSearchView();
+            renderListView();
+            renderTreeView();
+        }
+
+        function renderSearchView() {
+            const container = document.getElementById('search-container');
+            const apps = appData.apps || [];
             if (apps.length === 0) {
                 container.innerHTML = '<div class="loading">앱이 없습니다.</div>';
                 return;
@@ -101,7 +184,7 @@
                     <div class="app-body">
                         <p class="app-desc">${app.description}</p>
                         <div class="app-tags">
-                            ${(app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
+                            ${(app.tags || []).slice(0, 3).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
                         </div>
                         <a href="${app.url}" class="app-link">열기 →</a>
                     </div>
@@ -109,9 +192,90 @@
             `).join('');
         }
 
-        function updateStats(data) {
-            document.getElementById('total-apps').textContent = data.apps?.length || 0;
-            document.getElementById('total-categories').textContent = data.categories?.length || 0;
+        function renderListView() {
+            const container = document.getElementById('list-container');
+            const apps = appData.apps || [];
+            if (apps.length === 0) {
+                container.innerHTML = '<div class="loading">앱이 없습니다.</div>';
+                return;
+            }
+
+            const sorted = [...apps].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+            container.innerHTML = sorted.map(app => `
+                <li class="app-list-item">
+                    <div class="app-list-icon">${app.icon || '📦'}</div>
+                    <div class="app-list-info">
+                        <div class="app-list-name">${app.name}</div>
+                        <div class="app-list-desc">${app.description}</div>
+                    </div>
+                    <a href="${app.url}" class="app-list-link">이동 →</a>
+                </li>
+            `).join('');
+        }
+
+        function renderTreeView() {
+            const container = document.getElementById('tree-container');
+            const tree = appData.tree || {};
+            const categories = appData.categories || [];
+
+            if (categories.length === 0) {
+                container.innerHTML = '<div class="loading">앱이 없습니다.</div>';
+                return;
+            }
+
+            let html = '';
+            categories.forEach(category => {
+                const apps = tree[category] || [];
+                html += `
+                    <div>
+                        <div class="tree-category" onclick="toggleCategory(this)">
+                            <span class="tree-icon">▶</span>
+                            <span>📁 ${category}</span>
+                            <span style="margin-left: auto; font-size: 0.85rem; color: #999;">${apps.length}개</span>
+                        </div>
+                        <ul class="tree-apps" style="display: none;">
+                            ${apps.map(app => `
+                                <li class="tree-app">
+                                    <a href="apps/${category}/${app.id}/">
+                                        ${app.icon} ${app.name}
+                                    </a>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function toggleCategory(el) {
+            const list = el.nextElementSibling;
+            const icon = el.querySelector('.tree-icon');
+            list.style.display = list.style.display === 'none' ? '' : 'none';
+            icon.classList.toggle('collapsed');
+        }
+
+        function updateStats() {
+            document.getElementById('total-apps').textContent = appData.apps?.length || 0;
+            document.getElementById('total-categories').textContent = appData.categories?.length || 0;
+            const updated = new Date(appData.lastUpdated);
+            document.getElementById('updated-time').textContent = updated.toLocaleDateString('ko-KR');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+            if (tab === 'search') {
+                document.getElementById('search-view').classList.add('active');
+            } else if (tab === 'list') {
+                document.getElementById('list-view').classList.add('active');
+            } else if (tab === 'tree') {
+                document.getElementById('tree-view').classList.add('active');
+            }
+
+            event.target.classList.add('active');
         }
 
         document.getElementById('search-input').addEventListener('input', (e) => {
@@ -119,11 +283,12 @@
             document.querySelectorAll('.app-card').forEach(card => {
                 const name = card.querySelector('.app-name').textContent.toLowerCase();
                 const desc = card.querySelector('.app-desc').textContent.toLowerCase();
-                card.style.display = name.includes(keyword) || desc.includes(keyword) ? '' : 'none';
+                const tags = card.querySelector('.app-tags').textContent.toLowerCase();
+                card.style.display = name.includes(keyword) || desc.includes(keyword) || tags.includes(keyword) ? '' : 'none';
             });
         });
 
-        loadApps();
+        loadData();
     </script>
 </body>
 </html>
